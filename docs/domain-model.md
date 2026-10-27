@@ -16,6 +16,30 @@ A dealership represents an individual automotive retail location belonging to an
 
 Each dealership maintains its own sales opportunities and inventory, although data sources may be shared across dealerships.
 
+### User
+
+A user represents an individual authorized to access TurnLot.
+
+Users belong to an organization and may be associated with one or more dealerships.
+
+User identity is independent of assigned roles and permissions.
+
+### Role
+
+A role represents a named collection of permissions governing access to TurnLot's resources and capabilities.
+
+Roles define responsibilities independently of individual user identities.
+
+Each role assignment associates a user with a role and an authorization scope, such as an organization or dealership. A user may hold different roles across different scopes.
+
+### Permission
+
+A permission represents authorization to perform a specific action on a protected resource or platform capability.
+
+Permissions are associated with roles and determine which operations users may perform within their authorized scope.
+
+Permissions are independent of authentication mechanisms and application interfaces.
+
 ### Data Source
 
 A data source represents an external system or dataset supplying information to TurnLot.
@@ -88,6 +112,9 @@ Source observation time and ingestion processing time remain distinguishable, al
 flowchart TD
     O["Organization"]
     D["Dealership"]
+    U["User"]
+    RL["Role"]
+    P["Permission"]
     S["Data Source"]
     C["Customer"]
     L["Lead"]
@@ -100,8 +127,14 @@ flowchart TD
     R["Ingestion Run"]
 
     O --> D
+    O --> U
+    O --> RL
     O --> S
     O --> C
+
+    U -->|"Assigned roles within scope"| RL
+    RL -->|"Grants"| P
+    U -->|"Authorized access"| D
 
     S --> D
     S --> R
@@ -123,6 +156,8 @@ flowchart TD
 
 Relationships are conceptual and do not prescribe database foreign keys or cardinalities.
 
+User-to-dealership relationships represent authorized access rather than ownership. Role assignments determine the permissions users hold within their applicable organization or dealership scope.
+
 ## Domain Invariants
 
 ### Identity
@@ -136,10 +171,22 @@ Relationships are conceptual and do not prescribe database foreign keys or cardi
 ### Ownership
 
 - Dealerships belong to organizations.
+- Users belong to organizations.
 - Dealership-specific data remains associated with its originating dealership.
 - Customer information and associated records remain subject to their originating organization's ownership and access boundaries.
-- Access and cross-dealership operations respect explicit authorization boundaries.
 - Cross-organization data sharing and identity resolution require explicit authorization.
+
+### Authorization
+
+- User identity is independent of assigned roles and permissions.
+- Permissions govern access to protected resources and platform capabilities.
+- Roles group permissions independently of individual users.
+- Each role assignment associates a user, role, and explicit authorization scope.
+- Role assignments may apply at the organization or dealership level.
+- Users may hold different roles across different authorized scopes.
+- Permissions are effective only within the scope of their associated role assignments.
+- Permissions do not grant access beyond explicitly authorized organizational boundaries.
+- Access is denied unless explicitly authorized.
 
 ### Lifecycle
 
@@ -153,17 +200,10 @@ Relationships are conceptual and do not prescribe database foreign keys or cardi
 
 - Source-provided and interpreted information remain distinguishable.
 - Missing or uncertain information must not be treated as verified.
-- Repeated processing must not create unintended duplicate business records.
-- Incomplete inventory datasets must not imply that missing vehicles are unavailable.
-- Source observation time remains distinguishable from ingestion processing time.
-- Delayed, stale, or corrected source information must not silently overwrite newer authoritative information.
+- Business records must maintain consistent identities and relationships across repeated processing.
 
 ### Notifications
 
 - Match compatibility does not automatically authorize notification.
-- Reprocessing must not generate duplicate notifications for the same qualifying event.
+- Notifications are uniquely associated with their qualifying business events.
 - Subsequent qualifying events may produce additional notifications.
-
-## Model Boundaries
-
-The domain model defines business concepts, identities, relationships, ownership boundaries, and governing invariants without specifying database structures, processing workflows, or implementation details.

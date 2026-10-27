@@ -26,6 +26,19 @@ The architecture supports consistent operation, fault isolation, and recovery fr
 
 The architecture protects sensitive dealership and customer data through defined access boundaries, controlled interfaces, and appropriate security mechanisms.
 
+## Platform Scope
+
+TurnLot combines canonical dealership data management with vehicle-to-lead matching capabilities.
+
+The platform maintains two complementary domains:
+
+- **CRM and Inventory Data** — Canonical representations of customers, sales opportunities, vehicle interests, and dealership inventory derived from external systems.
+- **Platform Services** — Data ingestion, matching, evaluation, notifications, and access management.
+
+External systems remain authoritative for their underlying sales and inventory records. TurnLot maintains the information necessary to identify, evaluate, and deliver matching opportunities.
+
+TurnLot does not replace dealership CRMs or manage their sales processes.
+
 ## System Components
 
 TurnLot's components are organized into three categories based on their architectural roles.
@@ -77,6 +90,25 @@ It provides reusable persistence interfaces for accessing and managing dealershi
 The [`matching`](https://github.com/turnlot/matching) repository manages the identification and evaluation of potential matches between dealership vehicle interests and inventory.
 
 It encapsulates reusable matching logic independently of data ingestion and application interfaces.
+
+## Data Flow Responsibilities
+
+TurnLot's components implement the logical processing stages defined in [Data Flow](data-flow.md).
+
+| Stage | Responsible Component |
+|---|---|
+| Acquisition | `ingestion` |
+| Ingestion | `ingestion` |
+| Persistence | `database` |
+| Matching | `matching` |
+| Evaluation | `matching` |
+| Notification | Notification handling (implementation not yet assigned) |
+
+The `database` library provides shared persistence interfaces, while consuming applications execute database operations through those interfaces.
+
+The `api` provides authenticated access to platform data and capabilities, while the `dashboard` presents matching opportunities to authorized dealership personnel.
+
+Components may participate in multiple processing stages without assuming ownership of the entire workflow.
 
 ## Component Dependencies
 
