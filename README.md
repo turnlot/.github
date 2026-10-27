@@ -1,10 +1,19 @@
-# Turnlot GitHub Configuration
+# TurnLot Engineering
 
-Centralized GitHub configuration and development guidelines for Turnlot.
+Centralized engineering documentation and GitHub configuration for TurnLot.
 
-## Contents
+## Documentation
 
-- **[Organization Profile](profile/README.md)** — Public-facing company introduction.
-- **[Contributing Guidelines](CONTRIBUTING.md)** — Shared development standards and workflows.
-- **[Pull Request Template](pull_request_template.md)** — Standard template for pull requests across Turnlot repositories.
-- **[Architecture](architecture.md)** – System architecture, repository responsibilities, internal dependencies, and engineering principles.
+| Document | Description |
+|---|---|
+| [System Architecture](docs/architecture.md) | System structure, component boundaries, and architectural principles |
+| [Domain Model](docs/domain-model.md) | Business entities, identities, relationships, and invariants |
+| [Data Flow](docs/data-flow.md) | Data processing workflows and interactions between components |
+| [Engineering Standards](docs/engineering-standards.md) | Shared development conventions and quality expectations |
+
+## Organization Policies
+
+| Document | Description |
+|---|---|
+| [Contributing](CONTRIBUTING.md) | Organization-wide contribution guidelines |
+| [Security Policy](SECURITY.md) | Security practices and vulnerability reporting |
