@@ -1,1 +1,6 @@
 blank_issues_enabled: false
+
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/turnlot/.github/blob/main/SECURITY.md
+    about: Please report security issues privately by email to security@turnlot.ai, never through a public issue.

@@ -1,19 +1,14 @@
-# TurnLot Engineering
+# TurnLot GitHub Configuration
 
-Centralized engineering documentation and GitHub configuration for TurnLot.
+Organization-wide GitHub configuration and community files for TurnLot. Files here apply to every TurnLot repository that doesn't define its own.
 
-## Documentation
-
-| Document | Description |
+| Path | Purpose |
 |---|---|
-| [System Architecture](docs/architecture.md) | System structure, component boundaries, and architectural principles |
-| [Domain Model](docs/domain-model.md) | Business entities, identities, relationships, and invariants |
-| [Data Flow](docs/data-flow.md) | Data processing workflows and interactions between components |
-| [Engineering Standards](docs/engineering-standards.md) | Shared development conventions and quality expectations |
+| [`profile/README.md`](profile/README.md) | Public organization profile |
+| [`CONTRIBUTING.md`](CONTRIBUTING.md) | Development workflow, commits, and review policy |
+| [`SECURITY.md`](SECURITY.md) | Vulnerability reporting and security practices |
+| [`.github/ISSUE_TEMPLATE/`](.github/ISSUE_TEMPLATE/) | Default issue forms |
+| [`.github/PULL_REQUEST_TEMPLATE.md`](.github/PULL_REQUEST_TEMPLATE.md) | Default pull request template |
+| [`.github/workflows/python-ci.yml`](.github/workflows/python-ci.yml) | Shared CI workflow for Python repositories |
 
-## Organization Policies
-
-| Document | Description |
-|---|---|
-| [Contributing](CONTRIBUTING.md) | Organization-wide contribution guidelines |
-| [Security Policy](SECURITY.md) | Security practices and vulnerability reporting |
+This repository is public. Internal engineering documentation (architecture, domain model, data flow, engineering standards, and decision records) lives in the private [`turnlot/engineering`](https://github.com/turnlot/engineering) repository.
