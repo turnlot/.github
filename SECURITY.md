@@ -2,29 +2,35 @@
 
 Security is an important part of TurnLot's engineering practices. We are committed to protecting dealership data, maintaining secure infrastructure, and responsibly addressing security vulnerabilities.
 
-This policy applies to all repositories maintained by the [TurnLot GitHub organization](https://github.com/turnlot).
+## Scope
+
+This policy covers TurnLot's hosted services, including the TurnLot web application and API at `turnlot.ai` and its subdomains.
 
 ## Reporting a Vulnerability
 
-If you discover a potential security vulnerability, please report it privately.
+If you discover a potential security vulnerability, please report it privately by email to **[security@turnlot.ai](mailto:security@turnlot.ai)**.
 
 **Do not open a public GitHub issue or pull request to disclose a security vulnerability.**
 
-To report a vulnerability:
+Please include:
 
-1. Navigate to the affected repository's **Security** tab.
-2. Select **Report a vulnerability**, if private vulnerability reporting is enabled.
-3. Provide a description of the issue, affected components, reproduction steps, and potential impact.
+- A description of the issue and the affected service or URL.
+- Steps to reproduce.
+- The potential impact.
 
-If private vulnerability reporting is unavailable, contact TurnLot through an authorized private communication channel.
-
-We will review security reports and prioritize remediation based on severity and potential impact.
+We will acknowledge your report, review it, and prioritize remediation based on severity and potential impact.
 
 ## Supported Versions
 
-TurnLot is currently under active development.
+TurnLot is a hosted service. Security fixes are applied to the currently deployed version.
 
-Security fixes are generally applied to the latest maintained version of each component. Older releases may not receive security updates.
+## Responsible Disclosure
+
+We ask security researchers to:
+
+- Avoid accessing, modifying, or disclosing data belonging to TurnLot or its customers.
+- Avoid degrading the availability of TurnLot's services.
+- Allow reasonable time for investigation and remediation before publicly disclosing a reported vulnerability.
 
 ## Security Practices
 
@@ -59,12 +65,6 @@ TurnLot follows these principles across its repositories.
 - Treat imported files and external content as untrusted inputs.
 - Avoid unnecessarily transmitting sensitive dealership or customer information to AI providers.
 - Ensure AI-assisted processing cannot bypass established authorization or data-validation controls.
-
-## Responsible Disclosure
-
-We ask security researchers to avoid accessing, modifying, or disclosing data belonging to TurnLot or its customers.
-
-Please provide reasonable time for investigation and remediation before publicly disclosing a reported vulnerability.
 
 ## Policy Updates
 
