@@ -25,10 +25,7 @@ git checkout -b feature/feature-name
 Before opening a pull request, run the repository's checks. For Python repositories:
 
 ```bash
-ruff check .
-ruff format --check .
-mypy
-pytest -v
+make check    # lint, format, types, and tests, as CI runs them
 ```
 
 Stage changes deliberately, then commit and push:
