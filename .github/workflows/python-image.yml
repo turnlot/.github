@@ -10,12 +10,12 @@
 #
 #   jobs:
 #     ci:
-#       uses: turnlot/.github/.github/workflows/python-ci.yml@v1
+#       uses: turnlot/.github/.github/workflows/python-ci.yml@main
 #       with: ...
 #
 #     image:
 #       needs: ci
-#       uses: turnlot/.github/.github/workflows/python-image.yml@v1
+#       uses: turnlot/.github/.github/workflows/python-image.yml@main
 #       with:
 #         image: turnlot-matching
 #         ecr-repository: turnlot/matching

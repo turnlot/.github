@@ -16,7 +16,7 @@
 #
 #   jobs:
 #     ci:
-#       uses: turnlot/.github/.github/workflows/python-ci.yml@v1
+#       uses: turnlot/.github/.github/workflows/python-ci.yml@main
 #       with:
 #         postgres: true
 #         codeartifact: true
@@ -26,8 +26,9 @@
 # The Ruff version is read from the exact pin in pyproject.toml's dev extra,
 # so local and CI formatting always match.
 #
-# Callers pin a major tag (@v1). Backward-compatible changes move the tag;
-# breaking changes to inputs or behavior get a new major tag.
+# Callers use @main, so a merged change reaches every repository at once.
+# Before merging a change, test it by pointing one caller's pull request at
+# your branch, such as python-ci.yml@my-branch.
 #
 # This repository is public, so account IDs and role ARNs are passed in from
 # the calling repository rather than written here.
