@@ -16,16 +16,21 @@
 #
 #   jobs:
 #     ci:
-#       uses: turnlot/.github/.github/workflows/python-ci.yml@main
+#       uses: turnlot/.github/.github/workflows/python-ci.yml@v1
 #       with:
-#         ruff-version: "0.17.2"
 #         postgres: true
 #         codeartifact: true
-#         codeartifact-domain-owner: ${{ vars.CODEARTIFACT_DOMAIN_OWNER }}
-#         codeartifact-role-arn: ${{ vars.CODEARTIFACT_READ_ROLE_ARN }}
+#         codeartifact-domain-owner: "<shared account ID>"
+#         codeartifact-role-arn: ${{ vars.CODEARTIFACT_READER_ROLE_ARN }}
+#
+# The Ruff version is read from the exact pin in pyproject.toml's dev extra,
+# so local and CI formatting always match.
+#
+# Callers pin a major tag (@v1). Backward-compatible changes move the tag;
+# breaking changes to inputs or behavior get a new major tag.
 #
 # This repository is public, so account IDs and role ARNs are passed in from
-# the calling repository's variables rather than written here.
+# the calling repository rather than written here.
 
 name: Python CI
 
@@ -36,10 +41,6 @@ on:
         description: Python version to test with.
         type: string
         default: "3.14"
-      ruff-version:
-        description: Ruff version; must match the dev dependency pin in pyproject.toml.
-        type: string
-        required: true
       mypy:
         description: Run mypy.
         type: boolean
@@ -97,8 +98,34 @@ jobs:
         with:
           python-version: ${{ inputs.python-version }}
 
+      # Installs only Ruff, not the dev extra, so linting needs no
+      # CodeArtifact access.
+      - name: Read Ruff pin
+        id: ruff
+        shell: python
+        run: |
+          import os
+          import re
+          import sys
+          import tomllib
+
+          with open("pyproject.toml", "rb") as f:
+              project = tomllib.load(f).get("project", {})
+          dev = project.get("optional-dependencies", {}).get("dev", [])
+          pins = [
+              match.group(1)
+              for requirement in dev
+              if (match := re.fullmatch(r"ruff\s*==\s*([\w.]+)", requirement.strip()))
+          ]
+          if len(pins) != 1:
+              sys.exit('Pin Ruff exactly in the dev extra, for example "ruff==0.17.2"')
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"version={pins[0]}\n")
+
       - name: Install Ruff
-        run: python -m pip install "ruff==${{ inputs.ruff-version }}"
+        env:
+          RUFF_VERSION: ${{ steps.ruff.outputs.version }}
+        run: python -m pip install "ruff==$RUFF_VERSION"
 
       - name: Lint
         run: ruff check .

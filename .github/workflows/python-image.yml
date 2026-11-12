@@ -1,0 +1,216 @@
+# Shared image build for TurnLot Python repositories that run as jobs.
+#
+# Builds the repository's Dockerfile, checks the image starts, and, when
+# `push` is true, publishes it to ECR in the shared account. Call it after CI
+# so only images that pass lint and tests are pushed:
+#
+#   permissions:
+#     contents: read
+#     id-token: write
+#
+#   jobs:
+#     ci:
+#       uses: turnlot/.github/.github/workflows/python-ci.yml@v1
+#       with: ...
+#
+#     image:
+#       needs: ci
+#       uses: turnlot/.github/.github/workflows/python-image.yml@v1
+#       with:
+#         image: turnlot-matching
+#         ecr-repository: turnlot/matching
+#         ecr-account-id: "<shared account ID>"
+#         ecr-role-arn: ${{ vars.ECR_PUBLISHER_ROLE_ARN }}
+#         push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+#         codeartifact: true
+#         codeartifact-domain-owner: "<shared account ID>"
+#         codeartifact-role-arn: ${{ vars.CODEARTIFACT_READER_ROLE_ARN }}
+#
+# With `codeartifact`, the Dockerfile receives pip's CodeArtifact index URL as
+# the build secret `pip_index_url`. It holds a short-lived token, so it is
+# passed as a secret and never enters an image layer.
+#
+# Tags are immutable: by default the image is tagged with the commit SHA, and
+# infrastructure deploys a tag by setting it in the environment.
+#
+# This repository is public, so account IDs and role ARNs are passed in from
+# the calling repository rather than written here.
+
+name: Python Image
+
+on:
+  workflow_call:
+    inputs:
+      image:
+        description: Local image name, for example turnlot-matching.
+        type: string
+        required: true
+      check-args:
+        description: Arguments passed to the image to check it starts.
+        type: string
+        default: --help
+      push:
+        description: Push the image to ECR.
+        type: boolean
+        default: false
+      tag:
+        description: Image tag in ECR. Defaults to the commit SHA.
+        type: string
+        default: ""
+      aws-region:
+        type: string
+        default: us-east-2
+      ecr-repository:
+        description: ECR repository, for example turnlot/matching.
+        type: string
+        required: true
+      ecr-account-id:
+        description: AWS account ID that owns the ECR repository.
+        type: string
+        required: true
+      ecr-role-arn:
+        description: IAM role assumed through OIDC to push to ECR. Required when push is true.
+        type: string
+        default: ""
+      python-version:
+        description: Python version used to read pip's CodeArtifact configuration.
+        type: string
+        default: "3.14"
+      codeartifact:
+        description: Pass pip's CodeArtifact index URL to the build as the pip_index_url secret.
+        type: boolean
+        default: false
+      codeartifact-domain:
+        type: string
+        default: turnlot
+      codeartifact-repository:
+        type: string
+        default: python
+      codeartifact-domain-owner:
+        description: AWS account ID that owns the CodeArtifact domain.
+        type: string
+        default: ""
+      codeartifact-role-arn:
+        description: IAM role assumed through OIDC to read from CodeArtifact.
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  image:
+    name: Docker image
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+
+    env:
+      IMAGE: ${{ inputs.image }}:ci
+      AWS_REGION: ${{ inputs.aws-region }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Check inputs
+        env:
+          PUSH: ${{ inputs.push }}
+          ECR_ROLE_ARN: ${{ inputs.ecr-role-arn }}
+          CODEARTIFACT: ${{ inputs.codeartifact }}
+          DOMAIN_OWNER: ${{ inputs.codeartifact-domain-owner }}
+          CODEARTIFACT_ROLE_ARN: ${{ inputs.codeartifact-role-arn }}
+        run: |
+          if [ "$PUSH" = "true" ] && [ -z "$ECR_ROLE_ARN" ]; then
+            echo "ecr-role-arn is required when push is true" >&2
+            exit 1
+          fi
+          if [ "$CODEARTIFACT" = "true" ] && { [ -z "$DOMAIN_OWNER" ] || [ -z "$CODEARTIFACT_ROLE_ARN" ]; }; then
+            echo "codeartifact-domain-owner and codeartifact-role-arn are required when codeartifact is true" >&2
+            exit 1
+          fi
+
+      # ============================
+      # ----- AWS CodeArtifact -----
+      # ============================
+
+      - name: Set up Python
+        if: inputs.codeartifact
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ inputs.python-version }}
+
+      - name: Configure AWS credentials for CodeArtifact
+        if: inputs.codeartifact
+        uses: aws-actions/configure-aws-credentials@v6.3.0
+        with:
+          role-to-assume: ${{ inputs.codeartifact-role-arn }}
+          aws-region: ${{ inputs.aws-region }}
+
+      - name: Authenticate to CodeArtifact
+        if: inputs.codeartifact
+        env:
+          DOMAIN: ${{ inputs.codeartifact-domain }}
+          DOMAIN_OWNER: ${{ inputs.codeartifact-domain-owner }}
+          REPOSITORY: ${{ inputs.codeartifact-repository }}
+        run: |
+          aws codeartifact login \
+            --tool pip \
+            --domain "$DOMAIN" \
+            --domain-owner "$DOMAIN_OWNER" \
+            --repository "$REPOSITORY" \
+            --region "$AWS_REGION"
+
+      # =================
+      # ----- Build -----
+      # =================
+
+      - name: Build image
+        env:
+          CODEARTIFACT: ${{ inputs.codeartifact }}
+        run: |
+          if [ "$CODEARTIFACT" = "true" ]; then
+            PIP_INDEX_URL="$(python -m pip config get global.index-url)"
+            echo "::add-mask::$PIP_INDEX_URL"
+            export PIP_INDEX_URL
+            docker build --secret id=pip_index_url,env=PIP_INDEX_URL -t "$IMAGE" .
+          else
+            docker build -t "$IMAGE" .
+          fi
+
+      # Word splitting is intended: check-args holds several arguments.
+      - name: Check image runs
+        env:
+          CHECK_ARGS: ${{ inputs.check-args }}
+        run: |
+          # shellcheck disable=SC2086
+          docker run --rm "$IMAGE" $CHECK_ARGS
+
+      # ===================
+      # ----- Publish -----
+      # ===================
+
+      - name: Configure AWS credentials for ECR
+        if: inputs.push
+        uses: aws-actions/configure-aws-credentials@v6.3.0
+        with:
+          role-to-assume: ${{ inputs.ecr-role-arn }}
+          aws-region: ${{ inputs.aws-region }}
+          allowed-account-ids: ${{ inputs.ecr-account-id }}
+
+      - name: Push image
+        if: inputs.push
+        env:
+          ECR_ACCOUNT_ID: ${{ inputs.ecr-account-id }}
+          ECR_REPOSITORY: ${{ inputs.ecr-repository }}
+          TAG: ${{ inputs.tag || github.sha }}
+        run: |
+          REGISTRY="$ECR_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
+          aws ecr get-login-password --region "$AWS_REGION" \
+            | docker login --username AWS --password-stdin "$REGISTRY"
+          docker tag "$IMAGE" "$REGISTRY/$ECR_REPOSITORY:$TAG"
+          docker push "$REGISTRY/$ECR_REPOSITORY:$TAG"
