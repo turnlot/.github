@@ -28,6 +28,7 @@ Anyone can read every file, issue, pull request, and commit message here.
 - **Check whether the change resolves an open issue**, here or in the repositories it affects (`gh issue list -R turnlot/<repository>`).
 - If it resolves one fully, write `Closes #N` in the description (`Closes turnlot/<repository>#N` for another repository), so merging closes it.
 - If it resolves part of one, write `Part of #N`, and say in the description what is left.
+- If the pull request closes an issue, check whether the engineering documents cite that issue, and correct them in the same piece of work.
 - Never close an issue by hand without being asked.
 
 ## Style
