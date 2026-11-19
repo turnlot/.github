@@ -1,6 +1,6 @@
-# Contributing to TurnLot
+# Contributing to Turnlot
 
-This document outlines the development workflow and contribution guidelines for TurnLot repositories. Coding, tooling, and versioning standards are in the [Engineering Standards](https://github.com/turnlot/engineering/blob/main/engineering-standards.md) (organization members only).
+This document outlines the development workflow and contribution guidelines for Turnlot repositories. Coding, tooling, and versioning standards are in the [Engineering Standards](https://github.com/turnlot/engineering/blob/main/engineering-standards.md) (organization members only).
 
 ## Development Workflow
 
@@ -11,7 +11,7 @@ All changes are developed on a dedicated branch and merged into `main` through a
 3. Add or update tests where appropriate.
 4. Run the repository's checks.
 5. Push your branch and open a pull request targeting `main`.
-6. Address review feedback and ensure all required checks pass.
+6. Ensure all checks pass, and address review feedback if the pull request is reviewed.
 7. Merge once the pull request meets the [review policy](#review-policy).
 
 Create a branch:
@@ -19,7 +19,7 @@ Create a branch:
 ```bash
 git checkout main
 git pull origin main
-git checkout -b feature/feature-name
+git checkout -b feat/short-description
 ```
 
 Before opening a pull request, run the repository's checks. For Python repositories:
@@ -33,7 +33,7 @@ Stage changes deliberately, then commit and push:
 ```bash
 git add -p            # or add specific files by name
 git commit -m "feat: describe change"
-git push -u origin feature/feature-name
+git push -u origin feat/short-description
 ```
 
 Avoid `git add .`, which can pick up environment files and local data. Every repository's `.gitignore` must exclude `.env` files.
@@ -42,20 +42,12 @@ GitHub Actions runs each repository's required checks on pull requests.
 
 ## Branch Naming
 
-Use descriptive branch names with the following prefixes:
-
-| Prefix | Purpose |
-|---|---|
-| `feature/` | New functionality |
-| `fix/` | Bug fixes |
-| `refactor/` | Code improvements without changing functionality |
-| `docs/` | Documentation updates |
-| `chore/` | Maintenance and configuration |
+A branch is named for its commit type, then a short description: `type/short-description`. The types are the ones commits use, below.
 
 Examples:
-- `feature/database`
+- `feat/production-environment`
 - `fix/inventory-sync`
-- `refactor/lead-matching`
+- `docs/review-policy`
 
 ## Commits
 
@@ -86,14 +78,23 @@ All changes to `main` are submitted through a pull request.
 Pull requests should:
 
 - Focus on a single feature, fix, or related set of changes.
-- Clearly describe what changed, why, and its potential impact.
-- Include relevant tests or validation steps.
-- Pass required checks before merging.
+- Describe what changed and why, what was checked, and what has to happen after merging.
+- Say so if the change breaks an interface, includes a database migration, or changes a recorded decision.
+- Pass every check before merging.
+
+### Issues
+
+Before opening a pull request, check whether it resolves an open issue, in this repository or another.
+
+- If it resolves one fully, write `Closes #N` in the description, so merging closes it.
+- If it resolves part of one, write `Part of #N` and say what is left.
 
 ### Review Policy
 
-- Pull requests need one approval from another developer before merging.
-- Pull requests containing only `docs` or `chore` changes may be merged by their author once checks pass.
+- A pull request is merged once its checks pass.
+- When another developer is available to review, it needs their approval first, unless it contains only `docs` or `chore` changes.
+
+The policy in force is recorded in the engineering standards (organization members only).
 
 ## Security
 

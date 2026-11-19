@@ -1,0 +1,47 @@
+# Checks this repository's workflows for syntax and expression errors.
+#
+# Every Python repository calls these workflows at @main, so a mistake
+# merged here breaks CI everywhere at once. This catches the mistakes that
+# can be found without running a workflow. It does not replace testing a
+# change from a caller's branch (README).
+#
+# actionlint is downloaded as a release file and checked against a pinned
+# checksum, because no action for it is on the organization's allow-list.
+# To update it, change both values from the release's checksums file.
+
+name: Lint Workflows
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  actionlint:
+    name: actionlint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    env:
+      ACTIONLINT_VERSION: "1.7.12"
+      ACTIONLINT_SHA256: 8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Download actionlint
+        run: |
+          FILE="actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz"
+          curl -sSfLO "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/${FILE}"
+          echo "${ACTIONLINT_SHA256}  ${FILE}" | sha256sum --check
+          tar -xzf "$FILE" actionlint
+
+      - name: Lint
+        run: ./actionlint -color

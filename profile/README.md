@@ -1,10 +1,10 @@
-## 👋 Hi! We're TurnLot.
+## 👋 Hi! We're Turnlot.
 
 We build **AI-powered software that connects inventory with existing customer demand.**
 
 ### 🔍 What We Do
 
-TurnLot analyzes inventory and customer relationship management (CRM) data to uncover overlooked sales opportunities.
+Turnlot analyzes inventory and customer relationship management (CRM) data to uncover overlooked sales opportunities.
 
 By matching available products with previous customer inquiries, we help businesses reconnect with potential buyers and turn missed opportunities into sales.
 

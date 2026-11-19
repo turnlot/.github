@@ -1,4 +1,4 @@
-# Shared image build for TurnLot Python repositories that run as jobs.
+# Shared image build for Turnlot Python repositories that run as jobs.
 #
 # Builds the repository's Dockerfile, checks the image starts, and, when
 # `push` is true, publishes it to ECR in the shared account. Call it after CI
@@ -102,6 +102,7 @@ jobs:
   image:
     name: Docker image
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     permissions:
       contents: read

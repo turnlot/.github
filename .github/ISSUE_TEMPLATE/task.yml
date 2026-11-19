@@ -1,0 +1,34 @@
+name: Task
+description: Work to be done, a gap, or a decision to make.
+
+body:
+  - type: textarea
+    id: context
+    attributes:
+      label: What and why
+      description: The situation today and why it matters. Do not include credentials or customer data.
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: What doing this involves, and what it leaves out.
+      placeholder: |
+        -
+        -
+    validations:
+      required: true
+
+  - type: input
+    id: needed-before
+    attributes:
+      label: Needed before
+      description: The event this has to be done by, if there is one.
+
+  - type: textarea
+    id: related
+    attributes:
+      label: Related
+      description: Other issues, pull requests, or decision records.

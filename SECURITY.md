@@ -1,10 +1,10 @@
 # Security Policy
 
-Security is an important part of TurnLot's engineering practices. We are committed to protecting dealership data, maintaining secure infrastructure, and responsibly addressing security vulnerabilities.
+Security is an important part of Turnlot's engineering practices. We are committed to protecting dealership data, maintaining secure infrastructure, and responsibly addressing security vulnerabilities.
 
 ## Scope
 
-This policy covers TurnLot's hosted services, including the TurnLot web application and API at `turnlot.ai` and its subdomains.
+This policy covers Turnlot's hosted services, including the Turnlot web application and API at `turnlot.ai` and its subdomains.
 
 ## Reporting a Vulnerability
 
@@ -22,19 +22,19 @@ We will acknowledge your report, review it, and prioritize remediation based on 
 
 ## Supported Versions
 
-TurnLot is a hosted service. Security fixes are applied to the currently deployed version.
+Turnlot is a hosted service. Security fixes are applied to the currently deployed version.
 
 ## Responsible Disclosure
 
 We ask security researchers to:
 
-- Avoid accessing, modifying, or disclosing data belonging to TurnLot or its customers.
-- Avoid degrading the availability of TurnLot's services.
+- Avoid accessing, modifying, or disclosing data belonging to Turnlot or its customers.
+- Avoid degrading the availability of Turnlot's services.
 - Allow reasonable time for investigation and remediation before publicly disclosing a reported vulnerability.
 
 ## Security Practices
 
-TurnLot follows these principles across its repositories.
+Turnlot follows these principles across its repositories.
 
 ### Secrets and Credentials
 
@@ -68,4 +68,4 @@ TurnLot follows these principles across its repositories.
 
 ## Policy Updates
 
-This policy may be updated as TurnLot's platform, infrastructure, and security requirements evolve.
+This policy may be updated as Turnlot's platform, infrastructure, and security requirements evolve.

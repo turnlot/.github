@@ -1,33 +1,26 @@
-## Summary
-
-Briefly describe what this pull request changes and why.
+<!-- What this changes and why, in a few sentences. -->
 
 Closes #
 
-## Changes
+<!-- Or "Part of #N", saying what is left. Delete the line if no issue applies. -->
 
-- 
-- 
+## What changes
 
-## Impact
+-
 
-Describe effects on other components, consumers, or users. Write "None" if there are none.
+## Checked
 
-- [ ] Breaking change (interface, schema, or behavior that consumers rely on)
-- [ ] Includes a database migration (compatible with the previous `database` release)
-- [ ] Changes a recorded decision (decision record added or updated)
+<!-- What was run and what it showed. For infrastructure: the plan against each environment touched. -->
 
-## Testing
+## After merge
 
-Describe how the changes were tested.
+<!-- What has to happen next, in order: apply, migrate, deploy. "Nothing" if nothing. -->
 
-- [ ] Tests added or updated where appropriate
-- [ ] Required checks pass
-- [ ] Changes verified locally
+<!--
+Say so above if this:
+- breaks an interface, schema, or behavior something else relies on
+- includes a database migration
+- changes a recorded decision (add or supersede the decision record)
 
-## Checklist
-
-- [ ] Follows TurnLot's [contribution guidelines](https://github.com/turnlot/.github/blob/main/CONTRIBUTING.md)
-- [ ] Commit messages follow Conventional Commits
-- [ ] Documentation updated if necessary
-- [ ] No credentials, secrets, or customer data included
+No credentials, secrets, or customer data, here or in the diff.
+-->
