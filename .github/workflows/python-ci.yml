@@ -1,4 +1,4 @@
-# Shared CI for TurnLot Python repositories.
+# Shared CI for Turnlot Python repositories.
 #
 # Call it from a repository's .github/workflows/ci.yml:
 #
@@ -87,6 +87,7 @@ jobs:
   lint:
     name: Ruff
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - name: Checkout repository
@@ -141,6 +142,7 @@ jobs:
   test:
     name: Mypy and Pytest
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     permissions:
       contents: read
@@ -166,13 +168,15 @@ jobs:
 
       - name: Start PostgreSQL
         if: inputs.postgres
+        env:
+          POSTGRES_IMAGE: ${{ inputs.postgres-image }}
         run: |
           docker run -d --name postgres \
             -e POSTGRES_USER=turnlot \
             -e POSTGRES_PASSWORD=turnlot \
             -e POSTGRES_DB=turnlot_test \
             -p 5432:5432 \
-            "${{ inputs.postgres-image }}"
+            "$POSTGRES_IMAGE"
 
           for _ in $(seq 1 30); do
             if docker exec postgres pg_isready -U turnlot -d turnlot_test; then
