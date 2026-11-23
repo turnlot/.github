@@ -2,8 +2,8 @@
 #
 # Builds the repository's Dockerfile, checks the image starts, scans it for
 # known vulnerabilities, and, when `push` is true, publishes it to ECR in the
-# shared account. Call it after CI
-# so only images that pass lint and tests are pushed:
+# shared account. Call it after CI so only images that pass lint and tests
+# are pushed:
 #
 #   permissions:
 #     contents: read
