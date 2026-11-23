@@ -1,8 +1,9 @@
 # Shared image build for Turnlot Python repositories that run as jobs.
 #
-# Builds the repository's Dockerfile, checks the image starts, and, when
-# `push` is true, publishes it to ECR in the shared account. Call it after CI
-# so only images that pass lint and tests are pushed:
+# Builds the repository's Dockerfile, checks the image starts, scans it for
+# known vulnerabilities, and, when `push` is true, publishes it to ECR in the
+# shared account. Call it after CI so only images that pass lint and tests
+# are pushed:
 #
 #   permissions:
 #     contents: read
@@ -190,6 +191,24 @@ jobs:
         run: |
           # shellcheck disable=SC2086
           docker run --rm "$IMAGE" $CHECK_ARGS
+
+      # ================
+      # ----- Scan -----
+      # ================
+
+      # A known vulnerability of high or critical severity stops the image
+      # before it is pushed, when a fixed version exists. One with no fix yet
+      # cannot be acted on, so it does not block.
+      - name: Scan image
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: ${{ env.IMAGE }}
+          version: v0.76.1
+          scanners: vuln
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
+          format: table
 
       # ===================
       # ----- Publish -----
